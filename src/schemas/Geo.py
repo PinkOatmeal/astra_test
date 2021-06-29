@@ -29,7 +29,6 @@ class GeoSchemaCity(BaseGeoSchema):
 
 
 class GeoSchemaFull(BaseGeoSchema):
-    ip: str
     continent: str
     continent_code: str
     country: str
