@@ -59,3 +59,8 @@ class GeoliteController:
             return self.crud.update_with_full_info(geo_to_db)
 
         return self.crud.create_with_full_info(geo_to_db)
+
+    def update_all(self) -> None:
+        ip_list: list[str] = self.crud.read_all_ips()
+        for ip in ip_list:
+            self.fetch_city_info(ip)
