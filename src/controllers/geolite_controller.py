@@ -30,6 +30,9 @@ class GeoliteController:
             country_iso=response_json["country"]["iso_code"]
         )
 
+        if self.crud.ip_entry_exists(ip):
+            return self.crud.update_with_country(geo_to_db)
+
         return self.crud.create_with_country(geo_to_db)
 
     def fetch_city_info(self, ip: str) -> Geo:
@@ -51,5 +54,8 @@ class GeoliteController:
             postal=response_json["postal"]["code"] if "postal" in response_json.keys() else None,
             metro_code=response_json["location"].get("metro_code")
         )
+
+        if self.crud.ip_entry_exists(ip):
+            return self.crud.update_with_full_info(geo_to_db)
 
         return self.crud.create_with_full_info(geo_to_db)
