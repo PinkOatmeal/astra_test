@@ -40,5 +40,5 @@ class GeoCrud:
         self.db.refresh(geo_to_db)
         return geo_to_db
 
-    def read(self, _id: int):
+    def read_by_id(self, _id: int):
         return self.db.query(Geo).filter(Geo.id == _id).first()
