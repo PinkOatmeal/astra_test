@@ -1,4 +1,7 @@
+from typing import Optional
+
 from sqlalchemy.orm import Session
+
 from src.db.models.Geo import Geo
 from src.schemas.Geo import GeoSchemaFull, GeoSchemaFromCountryJson
 
@@ -40,5 +43,5 @@ class GeoCrud:
         self.db.refresh(geo_to_db)
         return geo_to_db
 
-    def read_by_id(self, _id: int):
+    def read_by_id(self, _id: int) -> Optional[Geo]:
         return self.db.query(Geo).filter(Geo.id == _id).first()
