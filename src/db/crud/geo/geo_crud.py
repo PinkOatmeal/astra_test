@@ -1,5 +1,6 @@
 from typing import Optional
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.db.models.Geo import Geo
@@ -45,6 +46,12 @@ class GeoCrud:
 
     def read_by_id(self, _id: int) -> Optional[Geo]:
         return self.db.query(Geo).filter(Geo.id == _id).first()
+
+    def read_all_ips(self) -> list[str]:
+        query = select(Geo.ip)
+        result = self.db.execute(query)
+
+        return [query_ip[0] for query_ip in result]
 
     def update_with_full_info(self, geo: GeoSchemaFull) -> Geo:
         geo_from_db: Geo = self.db.query(Geo).filter(Geo.ip == geo.ip).first()
