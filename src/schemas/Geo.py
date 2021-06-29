@@ -43,3 +43,13 @@ class GeoSchemaFull(BaseGeoSchema):
 
     class Config:
         orm_mode = True
+
+
+class GeoSchemaFromCountryJson(BaseGeoSchema):
+    continent: str
+    continent_code: str
+    country: str
+    country_iso: str
+
+    class Config:
+        orm_mode = True
