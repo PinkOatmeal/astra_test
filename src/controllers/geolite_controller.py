@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 
 from src.db.crud.geo.geo_crud import GeoCrud
 from src.db.models.Geo import Geo
+from src.exceptions.exceptions import InvalidIPProvided
 from src.schemas.Geo import GeoSchemaFromCountryJson, GeoSchemaFull
+from src.utils.utils import validate_ip
 
 
 class GeoliteController:
@@ -17,6 +19,9 @@ class GeoliteController:
         self.crud = GeoCrud(db)
 
     def fetch_country_info(self, ip: str) -> Geo:
+        if validate_ip(ip) is not None:
+            raise InvalidIPProvided("Invalid IP-address provided")
+
         url = f"https://geolite.info/geoip/v2.1/country/{ip}"
 
         response = requests.get(url, headers={"Authorization": f"Basic {self.auth_str}"})
@@ -36,6 +41,9 @@ class GeoliteController:
         return self.crud.create_with_country(geo_to_db)
 
     def fetch_city_info(self, ip: str) -> Geo:
+        if validate_ip(ip) is not None:
+            raise InvalidIPProvided("Invalid IP-address provided")
+
         url = f"https://geolite.info/geoip/v2.1/city/{ip}"
 
         response = requests.get(url, headers={"Authorization": f"Basic {self.auth_str}"})
