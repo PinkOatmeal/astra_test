@@ -45,3 +45,6 @@ class GeoCrud:
 
     def read_by_id(self, _id: int) -> Optional[Geo]:
         return self.db.query(Geo).filter(Geo.id == _id).first()
+
+    def ip_entry_exists(self, ip: str) -> bool:
+        return self.db.query(Geo).filter(Geo.ip == ip).first() is not None
