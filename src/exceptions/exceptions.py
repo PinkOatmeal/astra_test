@@ -4,3 +4,7 @@ class InvalidIPProvided(Exception):
 
 class ReservedIPProvided(Exception):
     pass
+
+
+class IPNotFound(Exception):
+    pass
