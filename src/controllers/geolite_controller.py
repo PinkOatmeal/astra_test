@@ -12,12 +12,12 @@ from config import GEOLITE_USER_ID, GEOLITE_API_KEY
 
 
 class GeoliteController:
-    auth_str: str
-    crud: GeoCrud
+    __auth_str: str
+    __crud: GeoCrud
 
     def __init__(self, db: Session, user_id: str = GEOLITE_USER_ID, api_key: str = GEOLITE_API_KEY) -> None:
-        self.auth_str = b64encode(bytes(f"{user_id}:{api_key}", "utf-8")).decode("utf-8")
-        self.crud = GeoCrud(db)
+        self.__auth_str = b64encode(bytes(f"{user_id}:{api_key}", "utf-8")).decode("utf-8")
+        self.__crud = GeoCrud(db)
 
     def fetch_country_info(self, ip: str) -> Geo:
         if validate_ip(ip) is not None:
@@ -33,10 +33,10 @@ class GeoliteController:
             country_iso=response_json["country"]["iso_code"]
         )
 
-        if self.crud.ip_entry_exists(ip):
-            return self.crud.update_with_country(geo_to_db)
+        if self.__crud.ip_entry_exists(ip):
+            return self.__crud.update_with_country(geo_to_db)
 
-        return self.crud.create_with_country(geo_to_db)
+        return self.__crud.create_with_country(geo_to_db)
 
     def fetch_city_info(self, ip: str) -> Geo:
         if validate_ip(ip) is not None:
@@ -58,18 +58,18 @@ class GeoliteController:
             metro_code=response_json["location"].get("metro_code")
         )
 
-        if self.crud.ip_entry_exists(ip):
-            return self.crud.update_with_full_info(geo_to_db)
+        if self.__crud.ip_entry_exists(ip):
+            return self.__crud.update_with_full_info(geo_to_db)
 
-        return self.crud.create_with_full_info(geo_to_db)
+        return self.__crud.create_with_full_info(geo_to_db)
 
     def update_all(self) -> None:
-        ip_list: list[str] = self.crud.read_all_ips()
+        ip_list: list[str] = self.__crud.read_all_ips()
         for ip in ip_list:
             self.fetch_city_info(ip)
 
     def __request_to_geolite(self, url: str) -> dict[str, any]:
-        response = requests.get(url, headers={"Authorization": f"Basic {self.auth_str}"})
+        response = requests.get(url, headers={"Authorization": f"Basic {self.__auth_str}"})
         response_json: dict[str, any] = response.json()
 
         if response_json.get("code") == "IP_ADDRESS_NOT_FOUND":
