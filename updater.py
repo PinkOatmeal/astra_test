@@ -1,7 +1,7 @@
 from config import GEOLITE_USER_ID, GEOLITE_API_KEY
 from src.controllers.geolite_controller import GeoliteController
 from src.db.database import Base, engine, SessionLocal
-from src.exceptions.exceptions import InvalidIPProvided
+from src.exceptions.exceptions import InvalidIPProvided, ReservedIPProvided
 
 
 def main():
@@ -27,6 +27,8 @@ def main():
                 print(f"Данные о адресе {answer} успешно обновлены")
             except InvalidIPProvided:
                 print("Введен не правильный ip-адрес, повторите ввод")
+            except ReservedIPProvided:
+                print("Введен зарезервированный ip-адрес (приватный, многоадресный и т.д.)")
         else:
             print("Неправильная команда, повторите ввод")
 
