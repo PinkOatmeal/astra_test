@@ -8,13 +8,14 @@ from src.db.models.Geo import Geo
 from src.exceptions.exceptions import InvalidIPProvided, IPNotFound, ReservedIPProvided
 from src.schemas.Geo import GeoSchemaFromCountryJson, GeoSchemaFull
 from src.utils.utils import validate_ip
+from config import GEOLITE_USER_ID, GEOLITE_API_KEY
 
 
 class GeoliteController:
     auth_str: str
     crud: GeoCrud
 
-    def __init__(self, user_id: str, api_key: str, db: Session) -> None:
+    def __init__(self, db: Session, user_id: str = GEOLITE_USER_ID, api_key: str = GEOLITE_API_KEY) -> None:
         self.auth_str = b64encode(bytes(f"{user_id}:{api_key}", "utf-8")).decode("utf-8")
         self.crud = GeoCrud(db)
 
