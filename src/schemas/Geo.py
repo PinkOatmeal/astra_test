@@ -22,7 +22,7 @@ class GeoSchemaCountry(BaseGeoSchema):
 class GeoSchemaCity(BaseGeoSchema):
     country: str
     country_iso: str
-    city: str
+    city: Optional[str]
 
     class Config:
         orm_mode = True
