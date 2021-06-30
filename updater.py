@@ -7,7 +7,7 @@ from src.exceptions.exceptions import InvalidIPProvided, IPNotFound, ReservedIPP
 def main():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    controller: GeoliteController = GeoliteController(GEOLITE_USER_ID, GEOLITE_API_KEY, db)
+    controller: GeoliteController = GeoliteController(db, user_id=GEOLITE_USER_ID, api_key=GEOLITE_API_KEY)
 
     print("Введите ip-адрес для обновления конкретной записи")
     print("`all` для обновления всех записей")
