@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.db.crud.geo.geo_crud import GeoCrud
 from src.db.models.Geo import Geo
-from src.exceptions.exceptions import InvalidIPProvided, ReservedIPProvided
+from src.exceptions.exceptions import InvalidIPProvided, IPNotFound, ReservedIPProvided
 from src.schemas.Geo import GeoSchemaFromCountryJson, GeoSchemaFull
 from src.utils.utils import validate_ip
 
@@ -70,6 +70,9 @@ class GeoliteController:
     def __request_to_geolite(self, url: str) -> dict[str, any]:
         response = requests.get(url, headers={"Authorization": f"Basic {self.auth_str}"})
         response_json: dict[str, any] = response.json()
+
+        if response_json.get("code") == "IP_ADDRESS_NOT_FOUND":
+            raise IPNotFound("The supplied IP address is not in the geolite database.")
 
         if response_json.get("code") == "IP_ADDRESS_RESERVED":
             raise ReservedIPProvided(response_json["error"])
