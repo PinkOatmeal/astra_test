@@ -22,13 +22,7 @@ class GeoliteController:
         if validate_ip(ip) is not None:
             raise InvalidIPProvided("Invalid IP-address provided")
 
-        url = f"https://geolite.info/geoip/v2.1/country/{ip}"
-
-        response = requests.get(url, headers={"Authorization": f"Basic {self.auth_str}"})
-        response_json: dict[str, any] = response.json()
-
-        if error_str := response_json.get("error"):
-            raise ReservedIPProvided(error_str)
+        response_json: dict[str, any] = self.__request_to_geolite(f"https://geolite.info/geoip/v2.1/country/{ip}")
 
         geo_to_db: GeoSchemaFromCountryJson = GeoSchemaFromCountryJson(
             ip=ip,
@@ -47,13 +41,7 @@ class GeoliteController:
         if validate_ip(ip) is not None:
             raise InvalidIPProvided("Invalid IP-address provided")
 
-        url = f"https://geolite.info/geoip/v2.1/city/{ip}"
-
-        response = requests.get(url, headers={"Authorization": f"Basic {self.auth_str}"})
-        response_json: dict[str, any] = response.json()
-
-        if error_str := response_json.get("error"):
-            raise ReservedIPProvided(error_str)
+        response_json: dict[str, any] = self.__request_to_geolite(f"https://geolite.info/geoip/v2.1/city/{ip}")
 
         geo_to_db: GeoSchemaFull = GeoSchemaFull(
             ip=ip,
@@ -78,3 +66,12 @@ class GeoliteController:
         ip_list: list[str] = self.crud.read_all_ips()
         for ip in ip_list:
             self.fetch_city_info(ip)
+
+    def __request_to_geolite(self, url: str) -> dict[str, any]:
+        response = requests.get(url, headers={"Authorization": f"Basic {self.auth_str}"})
+        response_json: dict[str, any] = response.json()
+
+        if response_json.get("code") == "IP_ADDRESS_RESERVED":
+            raise ReservedIPProvided(response_json["error"])
+
+        return response_json
